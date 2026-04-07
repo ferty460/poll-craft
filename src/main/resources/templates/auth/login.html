@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - PollCraft</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <a th:href="@{/}" class="auth-logo">
+                <span class="auth-logo__icon">📋</span>
+                <span class="auth-logo__text">PollCraft</span>
+            </a>
+            <h1 class="auth-title">Вход в аккаунт</h1>
+            <p class="auth-subtitle">Войдите, чтобы создавать опросы и голосовать</p>
+        </div>
+
+        <!-- Сообщения об ошибках и успехе -->
+        <div th:if="${param.error}" class="alert alert--error">
+            <span class="alert__icon">⚠️</span>
+            <span th:text="${error} ?: 'Неверный email или пароль'">Неверный email или пароль</span>
+        </div>
+
+        <div th:if="${param.logout}" class="alert alert--info">
+            <span class="alert__icon">👋</span>
+            <span>Вы успешно вышли из системы</span>
+        </div>
+
+        <div th:if="${param.registered}" class="alert alert--success">
+            <span class="alert__icon">✅</span>
+            <span>Регистрация успешна! Теперь войдите в систему</span>
+        </div>
+
+        <div th:if="${param.expired}" class="alert alert--warning">
+            <span class="alert__icon">⏰</span>
+            <span>Сессия истекла. Пожалуйста, войдите снова</span>
+        </div>
+
+        <!-- Форма входа -->
+        <form th:action="@{/auth/login}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username" class="form-label">Email</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">📧</span>
+                    <input type="email"
+                           id="username"
+                           name="username"
+                           class="form-input"
+                           placeholder="example@mail.ru"
+                           required
+                           autofocus>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           class="form-input"
+                           placeholder="example"
+                           required>
+                    <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full">Войти</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Нет аккаунта? <a th:href="@{/auth/register}" class="auth-link">Зарегистрироваться</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    }
+</script>
+</body>
+</html>

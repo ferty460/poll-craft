@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PollCraft - Создавай опросы легко</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page">
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container header__inner">
+            <div class="logo">
+                <span class="logo__icon">📋</span>
+                <span class="logo__text">PollCraft</span>
+            </div>
+
+            <nav class="nav" sec:authorize="isAnonymous()">
+                <a th:href="@{/auth/login}" class="nav__link">Вход</a>
+                <a th:href="@{/auth/register}" class="nav__link nav__link--primary">Регистрация</a>
+            </nav>
+
+            <nav class="nav" sec:authorize="isAuthenticated()">
+                <span class="nav__greeting">Привет, <span th:text="${username}"></span>!</span>
+                <a th:href="@{/polls/my}" class="nav__link">Мои опросы</a>
+                <a th:href="@{/polls/create}" class="nav__link nav__link--primary">Создать</a>
+                <a th:href="@{/auth/logout}" class="nav__link">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основной блок -->
+    <main class="main">
+        <div class="container">
+            <!-- Герой-секция -->
+            <section class="hero">
+                <h1 class="hero__title">Создавайте опросы за минуты</h1>
+                <p class="hero__subtitle">
+                    PollCraft — простая платформа для создания опросов,
+                    голосований и сбора мнений. Без сложных настроек.
+                </p>
+                <div class="hero__buttons">
+                    <a th:href="@{/auth/register}" class="btn btn--large btn--primary"
+                       sec:authorize="isAnonymous()">
+                        Начать бесплатно
+                    </a>
+                    <a th:href="@{/polls/create}" class="btn btn--large btn--primary"
+                       sec:authorize="isAuthenticated()">
+                        Создать опрос
+                    </a>
+                    <a th:href="@{/poll/example}" class="btn btn--large btn--outline">
+                        Посмотреть пример
+                    </a>
+                </div>
+            </section>
+
+            <!-- Быстрый поиск опроса -->
+            <section class="quick-access">
+                <h2 class="section-title">Быстрый доступ к опросу</h2>
+                <div class="quick-access__form">
+                    <input type="text" id="pollLink" placeholder="Введите ссылку или ID опроса" class="quick-access__input">
+                    <button onclick="goToPoll()" class="btn btn--primary">Перейти</button>
+                </div>
+            </section>
+
+            <!-- Возможности -->
+            <section class="features">
+                <div class="feature">
+                    <div class="feature__icon">📝</div>
+                    <h3 class="feature__title">Разные форматы</h3>
+                    <p class="feature__text">
+                        Одиночный выбор, множественный выбор, текстовые ответы
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature__icon">🔒</div>
+                    <h3 class="feature__title">Защита от накрутки</h3>
+                    <p class="feature__text">
+                        Защита повторных голосований по IP и сессии
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature__icon">📊</div>
+                    <h3 class="feature__title">Визуализация</h3>
+                    <p class="feature__text">
+                        Динамические диаграммы результатов в реальном времени
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature__icon">🔗</div>
+                    <h3 class="feature__title">Общий доступ</h3>
+                    <p class="feature__text">
+                        Простая ссылка для отправки участникам
+                    </p>
+                </div>
+            </section>
+
+            <!-- Как это работает -->
+            <section class="how-it-works">
+                <h2 class="section-title">Как это работает</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step__number">1</div>
+                        <h4 class="step__title">Регистрация</h4>
+                        <p class="step__text">Создайте аккаунт за 30 секунд</p>
+                    </div>
+                    <div class="step">
+                        <div class="step__number">2</div>
+                        <h4 class="step__title">Создание</h4>
+                        <p class="step__text">Добавьте вопросы и варианты ответов</p>
+                    </div>
+                    <div class="step">
+                        <div class="step__number">3</div>
+                        <h4 class="step__title">Публикация</h4>
+                        <p class="step__text">Получите ссылку и отправьте участникам</p>
+                    </div>
+                    <div class="step">
+                        <div class="step__number">4</div>
+                        <h4 class="step__title">Аналитика</h4>
+                        <p class="step__text">Смотрите результаты в виде диаграмм</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__copyright">
+                PollCraft
+            </div>
+            <div class="footer__links">
+                <a th:href="@{https://github.com/ferty460/poll-craft}" class="footer__link">Исходный код</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    function goToPoll() {
+        const input = document.getElementById('pollLink').value.trim();
+        if (!input) return;
+
+        let pollId = input;
+        if (input.includes('/poll/')) {
+            pollId = input.split('/poll/')[1];
+        }
+
+        window.location.href = '/poll/' + pollId;
+    }
+
+    document.getElementById('pollLink')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') goToPoll();
+    });
+</script>
+</body>
+</html>

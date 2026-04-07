@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - PollCraft</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <a th:href="@{/}" class="auth-logo">
+                <span class="auth-logo__icon">📋</span>
+                <span class="auth-logo__text">PollCraft</span>
+            </a>
+            <h1 class="auth-title">Создание аккаунта</h1>
+            <p class="auth-subtitle">Присоединяйтесь к PollCraft и создавайте опросы</p>
+        </div>
+
+        <!-- Сообщения об ошибках -->
+        <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+        <!-- Форма регистрации -->
+        <form th:action="@{/auth/register}"
+              th:object="${registrationRequest}"
+              method="post"
+              class="auth-form"
+              id="registerForm">
+
+            <div class="form-group">
+                <label for="username" class="form-label">Имя пользователя</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text"
+                           id="username"
+                           th:field="*{username}"
+                           class="form-input"
+                           placeholder="nickname"
+                           required
+                           autofocus>
+                </div>
+                <span th:if="${#fields.hasErrors('username')}"
+                      th:errors="*{username}"
+                      class="field-error"></span>
+                <small class="form-hint">От 3 до 50 символов</small>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">📧</span>
+                    <input type="email"
+                           id="email"
+                           th:field="*{email}"
+                           class="form-input"
+                           placeholder="example@mail.ru"
+                           required>
+                </div>
+                <span th:if="${#fields.hasErrors('email')}"
+                      th:errors="*{email}"
+                      class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password"
+                           id="password"
+                           th:field="*{password}"
+                           class="form-input"
+                           placeholder="example"
+                           required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('password')">👁️</button>
+                </div>
+                <span th:if="${#fields.hasErrors('password')}"
+                      th:errors="*{password}"
+                      class="field-error"></span>
+                <small class="form-hint">Минимум 6 символов</small>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword" class="form-label">Подтверждение пароля</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔐</span>
+                    <input type="password"
+                           id="confirmPassword"
+                           name="confirmPassword"
+                           class="form-input"
+                           required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</button>
+                </div>
+                <span id="confirmError" class="field-error"></span>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full" id="submitBtn">Зарегистрироваться</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Уже есть аккаунт? <a th:href="@{/auth/login}" class="auth-link">Войти</a></p>
+        </div>
+
+        <div class="auth-benefits">
+            <p class="benefits-title">✨ Что вы получите:</p>
+            <ul class="benefits-list">
+                <li>📝 Неограниченное создание опросов</li>
+                <li>📊 Детальная статистика и диаграммы</li>
+                <li>🔗 Общий доступ по ссылке</li>
+                <li>🔒 Защита от повторных голосований</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword(fieldId) {
+        const input = document.getElementById(fieldId);
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+    }
+
+    // Валидация совпадения паролей
+    const form = document.getElementById('registerForm');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const confirmError = document.getElementById('confirmError');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function validatePasswords() {
+        if (password.value !== confirmPassword.value) {
+            confirmError.textContent = 'Пароли не совпадают';
+            submitBtn.disabled = true;
+            return false;
+        } else {
+            confirmError.textContent = '';
+            submitBtn.disabled = false;
+            return true;
+        }
+    }
+
+    password.addEventListener('input', validatePasswords);
+    confirmPassword.addEventListener('input', validatePasswords);
+
+    form.addEventListener('submit', function(e) {
+        if (!validatePasswords()) {
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

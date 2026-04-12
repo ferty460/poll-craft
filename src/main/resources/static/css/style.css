@@ -40,6 +40,7 @@ body {
     gap: 10px;
     font-size: 24px;
     font-weight: 700;
+    text-decoration: none;
 }
 
 .logo__icon {
@@ -600,8 +601,154 @@ body {
     gap: 8px;
 }
 
-/* Адаптивность */
-@media (max-width: 520px) {
+/* ===== АДАПТИВНОСТЬ ===== */
+
+/* Планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+
+    .hero__title {
+        font-size: 40px;
+    }
+
+    .features {
+        gap: 20px;
+    }
+}
+
+/* Мобильные устройства (до 768px) */
+@media (max-width: 768px) {
+    /* Общие */
+    .container {
+        padding: 0 16px;
+    }
+
+    .main {
+        padding: 30px 0;
+    }
+
+    /* Шапка */
+    .header__inner {
+        flex-direction: column;
+        height: auto;
+        padding: 15px 0;
+        gap: 12px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .logo__icon {
+        font-size: 24px;
+    }
+
+    .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .nav__greeting {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    /* Герой-секция */
+    .hero {
+        padding: 40px 16px;
+        margin-bottom: 40px;
+        border-radius: 12px;
+    }
+
+    .hero__title {
+        font-size: 28px;
+    }
+
+    .hero__subtitle {
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+
+    .hero__buttons {
+        gap: 12px;
+    }
+
+    /* Кнопки */
+    .btn--large {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    /* Возможности */
+    .features {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 40px;
+    }
+
+    .feature {
+        padding: 20px;
+    }
+
+    /* Секция "Как это работает" */
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .step__number {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .step__title {
+        font-size: 16px;
+    }
+
+    /* Быстрый доступ */
+    .quick-access {
+        padding: 24px 16px;
+        margin-bottom: 40px;
+    }
+
+    .quick-access__form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .quick-access__input {
+        width: 100%;
+    }
+
+    /* Подвал */
+    .footer {
+        margin-top: 30px;
+        padding: 20px 0;
+    }
+
+    .footer__inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .footer__links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    /* Страницы авторизации */
     .auth-card {
         padding: 30px 20px;
     }
@@ -617,38 +764,123 @@ body {
     }
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
+/* Маленькие мобильные устройства (до 480px) */
+@media (max-width: 480px) {
     .hero__title {
-        font-size: 32px;
+        font-size: 24px;
     }
 
     .hero__subtitle {
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+
+    .feature__title {
         font-size: 16px;
     }
 
-    .features {
-        grid-template-columns: 1fr;
+    .feature__text {
+        font-size: 13px;
     }
 
-    .steps {
-        grid-template-columns: 1fr;
-    }
-
-    .quick-access__form {
-        flex-direction: column;
-    }
-
-    .footer__inner {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .nav {
-        gap: 12px;
+    .nav__link {
+        font-size: 14px;
     }
 
     .nav__link--primary {
-        padding: 6px 12px;
+        padding: 5px 10px;
+    }
+}
+
+/* Гориентальная ориентация на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+    .header__inner {
+        flex-direction: row;
+        height: 60px;
+    }
+
+    .nav__greeting {
+        width: auto;
+    }
+
+    .hero {
+        padding: 30px 16px;
+    }
+
+    .hero__title {
+        font-size: 24px;
+    }
+}
+
+/* Планшеты в портретной ориентации */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+    .features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Улучшенная читаемость на больших экранах */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1300px;
+    }
+
+    .hero__title {
+        font-size: 56px;
+    }
+
+    .hero__subtitle {
+        font-size: 20px;
+        max-width: 700px;
+    }
+}
+
+/* Анимация для мобильного меню (если нужно) */
+@media (max-width: 768px) {
+    .nav {
+        transition: all 0.3s ease;
+    }
+
+    .feature, .step, .poll-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature:active, .step:active, .poll-card:active {
+        transform: scale(0.98);
+    }
+}
+
+/* Улучшение touch-целей на мобильных */
+@media (max-width: 768px) {
+    .nav__link,
+    .btn,
+    .quick-access__input,
+    .action-btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    button,
+    .btn,
+    .action-btn,
+    .copy-btn,
+    .add-option-btn,
+    .btn-icon {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    input,
+    textarea,
+    select {
+        font-size: 16px; /* Предотвращает масштабирование на iOS */
     }
 }

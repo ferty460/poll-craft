@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.poll_craft.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,7 +27,15 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/", "/poll/**").permitAll()
+                        .requestMatchers("/", "/error/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/polls/create").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/polls/create").authenticated()
+                        .requestMatchers("/polls/my").authenticated()
+                        .requestMatchers("/polls/*/delete").authenticated()
+                        .requestMatchers("/polls/*/toggle").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/polls/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/polls/*/results").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/polls/*/vote").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -48,6 +57,12 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/error?status=403")
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendRedirect("/auth/login");
+                        })
                 );
 
         return http.build();

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница не найдена - PollCraft</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div class="container header__inner">
+            <a th:href="@{/}" class="logo">
+                <span class="logo__icon">📋</span>
+                <span class="logo__text">PollCraft</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="not-found-container">
+                <div class="not-found-card">
+                    <div class="not-found-icon">🔍❓</div>
+                    <div class="not-found-code">404</div>
+                    <h1 class="not-found-title">Страница не найдена</h1>
+                    <p class="not-found-text">
+                        К сожалению, страница, которую вы ищете, не существует или была перемещена.
+                    </p>
+
+                    <div class="error-actions">
+                        <button onclick="history.back()" class="btn btn-secondary">◀ Назад</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__copyright">PollCraft</div>
+            <div class="footer__links">
+                <a th:href="@{https://github.com/ferty460/poll-craft}" class="footer__link">Исходный код</a>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

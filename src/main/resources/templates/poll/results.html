@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты опроса - PollCraft</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/poll.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="page">
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container header__inner">
+            <a th:href="@{/}" class="logo">
+                <span class="auth-logo__icon">📋</span>
+                <span class="auth-logo__text">PollCraft</span>
+            </a>
+
+            <nav class="nav" sec:authorize="isAnonymous()">
+                <a th:href="@{/auth/login}" class="nav__link">Вход</a>
+                <a th:href="@{/auth/register}" class="nav__link nav__link--primary">Регистрация</a>
+            </nav>
+
+            <nav class="nav" sec:authorize="isAuthenticated()">
+                <span class="nav__greeting">Привет, <span th:text="${username}"></span>!</span>
+                <a th:href="@{/polls/my}" class="nav__link">Мои опросы</a>
+                <a th:href="@{/polls/create}" class="nav__link nav__link--primary">Создать</a>
+                <a th:href="@{/auth/logout}" class="nav__link">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основной блок -->
+    <main class="main">
+        <div class="container">
+            <div class="results-container">
+                <!-- Заголовок опроса -->
+                <div class="poll-header">
+                    <h1 class="poll-title" th:text="${poll.title}">Название опроса</h1>
+                    <div class="poll-description" th:text="${poll.description} ?: 'Описание отсутствует'">
+                        Описание
+                    </div>
+                </div>
+
+                <!-- Статистика -->
+                <div class="stats-summary">
+                    <div class="stat-card">
+                        <div class="stat-number" th:text="${totalVotes}">0</div>
+                        <div class="stat-label">Всего голосов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" th:text="${poll.questions.size()}">0</div>
+                        <div class="stat-label">Вопросов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" th:text="${poll.isActive ? 'Активен' : 'Закрыт'}">Активен</div>
+                        <div class="stat-label">Статус</div>
+                    </div>
+                </div>
+
+                <!-- Результаты по вопросам -->
+                <div th:each="questionResult : ${results}" class="question-result">
+                    <h3 class="question-title" th:text="${questionResult.get('text')}">Текст вопроса</h3>
+                    <span class="question-type">
+                        <span th:if="${questionResult.get('type') == 'SINGLE'}">Одиночный выбор</span>
+                        <span th:if="${questionResult.get('type') == 'MULTIPLE'}">Множественный выбор</span>
+                        <span th:if="${questionResult.get('type') == 'TEXT'}">Текстовый ответ</span>
+                    </span>
+
+                    <!-- Для SINGLE и MULTIPLE -->
+                    <div th:if="${questionResult.get('type') != 'TEXT'}">
+                        <div class="chart-container">
+                            <canvas th:id="'chart-' + ${questionResult.get('questionId')}"></canvas>
+                        </div>
+
+                        <table class="stats-table">
+                            <thead>
+                            <tr>
+                                <th>Вариант ответа</th>
+                                <th>Голосов</th>
+                                <th>Процент</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="option : ${questionResult.get('options')}">
+                                <td th:text="${option.get('text')}">Вариант</td>
+                                <td th:text="${option.get('count')}">0</td>
+                                <td style="width: 40%;">
+                                    <div class="percentage-bar">
+                                        <div class="percentage-fill"
+                                             th:style="'width: ' + ${option.get('percentage')} + '%;'"
+                                             th:text="${option.get('percentage')} + '%'">
+                                            0%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Для TEXT -->
+                    <div th:if="${questionResult.get('type') == 'TEXT'}">
+                        <div th:if="${questionResult.get('answers') != null and !questionResult.get('answers').isEmpty()}"
+                             class="text-answers-list">
+                            <div th:each="answer : ${questionResult.get('answers')}" class="text-answer-item">
+                                <span th:text="${answer}">Текстовый ответ</span>
+                            </div>
+                        </div>
+                        <div th:unless="${questionResult.get('answers') != null and !questionResult.get('answers').isEmpty()}"
+                             class="no-answers">
+                            📭 Пока нет текстовых ответов
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="action-buttons">
+                    <a th:href="@{/}" class="btn btn-secondary">На главную</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__copyright">
+                PollCraft
+            </div>
+            <div class="footer__links">
+                <a th:href="@{https://github.com/ferty460/poll-craft}" class="footer__link">Исходный код</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // Хранение экземпляров диаграмм
+    const charts = {};
+
+    // Функция для генерации случайных цветов
+    function getChartColors(count) {
+        const colors = [
+            '#667eea', '#764ba2', '#f093fb', '#4facfe',
+            '#43e97b', '#fa709a', '#fee140', '#30cfd0',
+            '#a8edea', '#fed6e3', '#c471f5', '#12c2e9'
+        ];
+
+        const result = [];
+        for (let i = 0; i < count; i++) {
+            result.push(colors[i % colors.length]);
+        }
+        return result;
+    }
+
+    // Функция для создания диаграммы
+    function createChart(chartId, options, type = 'bar') {
+        const canvas = document.getElementById(chartId);
+        if (!canvas) return null;
+
+        const ctx = canvas.getContext('2d');
+        const labels = options.map(opt => opt.text);
+        const data = options.map(opt => opt.count);
+        const backgroundColors = getChartColors(options.length);
+
+        // Уничтожаем старую диаграмму, если существует
+        if (charts[chartId]) {
+            charts[chartId].destroy();
+        }
+
+        const chartConfig = {
+            type: type === 'pie' ? 'pie' : 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Голосов',
+                    data: data,
+                    backgroundColor: type === 'pie' ? backgroundColors : backgroundColors.map(c => c + '80'),
+                    borderColor: type === 'pie' ? backgroundColors : backgroundColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: type === 'pie' ? 'bottom' : 'top',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${label}: ${value} голосов (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                scales: type === 'pie' ? {} : {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        },
+                        title: {
+                            display: true,
+                            text: 'Количество голосов'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Варианты ответов'
+                        }
+                    }
+                }
+            }
+        };
+
+        charts[chartId] = new Chart(ctx, chartConfig);
+        return charts[chartId];
+    }
+
+    // Загрузка данных и создание диаграмм
+    window.addEventListener('DOMContentLoaded', function() {
+        // Получаем данные из атрибутов
+        const questionResults = document.querySelectorAll('.question-result');
+
+        questionResults.forEach((result, index) => {
+            const chartCanvas = result.querySelector('canvas');
+            if (chartCanvas) {
+                const chartId = chartCanvas.id;
+                // Получаем данные options из атрибута data-options
+                const optionsData = chartCanvas.getAttribute('th:data-options');
+
+                // Парсим данные из Thymeleaf
+                const optionsElement = result.querySelector('tbody');
+                if (optionsElement) {
+                    const options = [];
+                    const rows = optionsElement.querySelectorAll('tr');
+                    rows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 2) {
+                            options.push({
+                                text: cells[0]?.textContent || '',
+                                count: parseInt(cells[1]?.textContent) || 0
+                            });
+                        }
+                    });
+
+                    // Определяем тип диаграммы (для маленького количества вариантов - круговая)
+                    const chartType = options.length <= 5 ? 'pie' : 'bar';
+                    createChart(chartId, options, chartType);
+                }
+            }
+        });
+
+        // Анимация процентных баров
+        const percentageBars = document.querySelectorAll('.percentage-fill');
+        percentageBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        });
+    });
+</script>
+</body>
+</html>

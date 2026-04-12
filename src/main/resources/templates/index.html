@@ -11,10 +11,10 @@
     <!-- Шапка -->
     <header class="header">
         <div class="container header__inner">
-            <div class="logo">
-                <span class="logo__icon">📋</span>
-                <span class="logo__text">PollCraft</span>
-            </div>
+            <a th:href="@{/}" class="auth-logo">
+                <span class="auth-logo__icon">📋</span>
+                <span class="auth-logo__text">PollCraft</span>
+            </a>
 
             <nav class="nav" sec:authorize="isAnonymous()">
                 <a th:href="@{/auth/login}" class="nav__link">Вход</a>
@@ -49,9 +49,6 @@
                        sec:authorize="isAuthenticated()">
                         Создать опрос
                     </a>
-                    <a th:href="@{/poll/example}" class="btn btn--large btn--outline">
-                        Посмотреть пример
-                    </a>
                 </div>
             </section>
 
@@ -59,7 +56,7 @@
             <section class="quick-access">
                 <h2 class="section-title">Быстрый доступ к опросу</h2>
                 <div class="quick-access__form">
-                    <input type="text" id="pollLink" placeholder="Введите ссылку или ID опроса" class="quick-access__input">
+                    <input type="text" id="pollLink" placeholder="Введите ID опроса" class="quick-access__input">
                     <button onclick="goToPoll()" class="btn btn--primary">Перейти</button>
                 </div>
             </section>
@@ -147,11 +144,11 @@
         if (!input) return;
 
         let pollId = input;
-        if (input.includes('/poll/')) {
-            pollId = input.split('/poll/')[1];
+        if (input.includes('/polls/')) {
+            pollId = input.split('/polls/')[1];
         }
 
-        window.location.href = '/poll/' + pollId;
+        window.location.href = '/polls/' + pollId;
     }
 
     document.getElementById('pollLink')?.addEventListener('keypress', function(e) {

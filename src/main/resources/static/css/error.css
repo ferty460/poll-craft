@@ -1,0 +1,135 @@
+.error-container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.error-card {
+    background: white;
+    border-radius: 20px;
+    padding: 50px 40px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.error-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.error-code {
+    font-size: 72px;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 16px;
+    line-height: 1;
+}
+
+.error-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+.error-message {
+    font-size: 16px;
+    color: #6c757d;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.error-details {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: left;
+    border: 1px solid #e9ecef;
+}
+
+.error-details-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-details-content {
+    font-family: monospace;
+    font-size: 13px;
+    color: #dc3545;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    word-break: break-word;
+}
+
+.error-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.not-found-container {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.not-found-card {
+    text-align: center;
+    max-width: 600px;
+}
+
+.not-found-icon {
+    font-size: 120px;
+    margin-bottom: 20px;
+}
+
+.not-found-code {
+    font-size: 24px;
+    color: #667eea;
+    margin-bottom: 16px;
+}
+
+.not-found-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+.not-found-text {
+    color: #6c757d;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .error-card {
+        padding: 30px 20px;
+    }
+
+    .error-code {
+        font-size: 48px;
+    }
+
+    .error-title {
+        font-size: 22px;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+}

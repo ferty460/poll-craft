@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка - PollCraft</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div class="container header__inner">
+            <a th:href="@{/static}" class="logo">
+                <span class="logo__icon">📋</span>
+                <span class="logo__text">PollCraft</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="error-container">
+                <div class="error-card">
+                    <div class="error-icon">
+                        <span th:if="${status == 404}">🔍</span>
+                        <span th:if="${status == 403}">🔒</span>
+                        <span th:if="${status == 400}">⚠️</span>
+                        <span th:if="${status == 500}">💥</span>
+                        <span th:unless="${status == 404 or status == 403 or status == 400 or status == 500}">😵</span>
+                    </div>
+
+                    <div class="error-code" th:text="${status} ?: 'Ошибка'">500</div>
+
+                    <h1 class="error-title" th:text="${error} ?: 'Что-то пошло не так'">
+                        Что-то пошло не так
+                    </h1>
+
+                    <p class="error-message" th:text="${message} ?: 'Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже.'">
+                        Произошла непредвиденная ошибка
+                    </p>
+
+                    <div class="error-actions">
+                        <button onclick="history.back()" class="btn btn-secondary">◀ Вернуться назад</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__copyright">PollCraft</div>
+            <div class="footer__links">
+                <a th:href="@{https://github.com/ferty460/poll-craft}" class="footer__link">Исходный код</a>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

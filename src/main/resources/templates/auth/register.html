@@ -31,7 +31,6 @@
             <div class="form-group">
                 <label for="username" class="form-label">Имя пользователя</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">👤</span>
                     <input type="text"
                            id="username"
                            th:field="*{username}"
@@ -49,7 +48,6 @@
             <div class="form-group">
                 <label for="email" class="form-label">Email</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">📧</span>
                     <input type="email"
                            id="email"
                            th:field="*{email}"
@@ -65,7 +63,6 @@
             <div class="form-group">
                 <label for="password" class="form-label">Пароль</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
                     <input type="password"
                            id="password"
                            th:field="*{password}"
@@ -83,11 +80,11 @@
             <div class="form-group">
                 <label for="confirmPassword" class="form-label">Подтверждение пароля</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔐</span>
                     <input type="password"
                            id="confirmPassword"
                            name="confirmPassword"
                            class="form-input"
+                           placeholder="example"
                            required>
                     <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</button>
                 </div>
@@ -99,16 +96,6 @@
 
         <div class="auth-footer">
             <p>Уже есть аккаунт? <a th:href="@{/auth/login}" class="auth-link">Войти</a></p>
-        </div>
-
-        <div class="auth-benefits">
-            <p class="benefits-title">✨ Что вы получите:</p>
-            <ul class="benefits-list">
-                <li>📝 Неограниченное создание опросов</li>
-                <li>📊 Детальная статистика и диаграммы</li>
-                <li>🔗 Общий доступ по ссылке</li>
-                <li>🔒 Защита от повторных голосований</li>
-            </ul>
         </div>
     </div>
 </div>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание опроса - PollCraft</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* Дополнительные стили */
+        .create-form {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s;
+        }
+
+        .question-card.has-error {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .question-number {
+            font-weight: 600;
+            color: #667eea;
+            background: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .remove-question {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .remove-question:hover {
+            background: #fee;
+        }
+
+        .options-list {
+            margin-top: 16px;
+            margin-left: 20px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .option-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .option-input.has-error {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .remove-option {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+        }
+
+        .add-option-btn {
+            background: none;
+            border: 1px dashed #667eea;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 12px;
+            margin-left: 20px;
+        }
+
+        .add-option-btn:hover {
+            background: #f0f0ff;
+        }
+
+        .btn-icon {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-icon:hover {
+            background: #f8f9fa;
+        }
+
+        .question-type-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-left: 16px;
+        }
+
+        .required-checkbox {
+            margin-left: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            margin-top: 32px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .char-counter {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .hidden-options {
+            display: none;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        /* Стили для ошибок */
+        .error-container {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-container.show {
+            display: block;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        .error-title {
+            font-weight: 600;
+            color: #721c24;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-list {
+            list-style: none;
+            padding-left: 24px;
+            margin: 0;
+        }
+
+        .error-list li {
+            color: #721c24;
+            font-size: 14px;
+            margin-bottom: 5px;
+            list-style-type: disc;
+        }
+
+        .field-error {
+            display: block;
+            font-size: 12px;
+            color: #dc3545;
+            margin-top: 5px;
+        }
+
+        .input-error {
+            border-color: #dc3545 !important;
+            background: #fff5f5 !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container header__inner">
+            <a th:href="@{/}" class="logo">
+                <span class="auth-logo__icon">📋</span>
+                <span class="auth-logo__text">PollCraft</span>
+            </a>
+
+            <nav class="nav" sec:authorize="isAnonymous()">
+                <a th:href="@{/auth/login}" class="nav__link">Вход</a>
+                <a th:href="@{/auth/register}" class="nav__link nav__link--primary">Регистрация</a>
+            </nav>
+
+            <nav class="nav" sec:authorize="isAuthenticated()">
+                <span class="nav__greeting">Привет, <span th:text="${username}"></span>!</span>
+                <a th:href="@{/polls/my}" class="nav__link">Мои опросы</a>
+                <a th:href="@{/polls/create}" class="nav__link nav__link--primary">Создать</a>
+                <a th:href="@{/auth/logout}" class="nav__link">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основной блок -->
+    <main class="main">
+        <div class="container">
+            <div class="create-form">
+                <h1 style="font-size: 32px; margin-bottom: 8px; text-align: center;">✨ Создание опроса</h1>
+                <p style="font-size: 16px; margin-bottom: 32px; text-align: center; color: #6c757d;">Заполните форму ниже, чтобы создать новый опрос</p>
+
+                <!-- Контейнер для ошибок валидации -->
+                <div id="validationErrors" class="error-container">
+                    <div class="error-title">
+                        <span>⚠️</span>
+                        <span>Пожалуйста, исправьте следующие ошибки:</span>
+                    </div>
+                    <ul id="errorList" class="error-list"></ul>
+                </div>
+
+                <!-- Thymeleaf ошибки -->
+                <div th:if="${param.error}" class="alert alert-error" th:text="${param.error}"></div>
+
+                <form th:action="@{/polls/create}" th:object="${pollRequest}" method="post" id="pollForm">
+                    <!-- Основная информация -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span>📝</span>
+                            <span>Основная информация</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="title" class="form-label">Название опроса *</label>
+                            <input type="text"
+                                   id="title"
+                                   th:field="*{title}"
+                                   class="form-input"
+                                   placeholder="Например: Опрос о качестве обслуживания"
+                                   maxlength="255">
+                            <div class="char-counter">
+                                <span id="titleCounter">0</span>/255
+                            </div>
+                            <span th:if="${#fields.hasErrors('title')}"
+                                  th:errors="*{title}"
+                                  class="field-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">Описание (необязательно)</label>
+                            <textarea id="description"
+                                      th:field="*{description}"
+                                      class="form-input"
+                                      rows="4"
+                                      placeholder="Опишите цель опроса или дайте дополнительные инструкции"
+                                      maxlength="5000"></textarea>
+                            <div class="char-counter">
+                                <span id="descCounter">0</span>/5000
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Вопросы -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span>❓</span>
+                            <span>Вопросы</span>
+                        </div>
+
+                        <div id="questions-container">
+                            <!-- Будет заполняться JavaScript -->
+                        </div>
+
+                        <button type="button" class="btn-icon" onclick="addQuestion()" style="margin-top: 16px;">
+                            ➕ Добавить вопрос
+                        </button>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">Отмена</button>
+                        <button type="submit" class="btn btn-primary">🚀 Опубликовать опрос</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__copyright">
+                PollCraft
+            </div>
+            <div class="footer__links">
+                <a th:href="@{https://github.com/ferty460/poll-craft}" class="footer__link">Исходный код</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    let questionCounter = 0;
+    let validationErrors = [];
+
+    // Показать ошибки
+    function showErrors(errors) {
+        const errorContainer = document.getElementById('validationErrors');
+        const errorList = document.getElementById('errorList');
+
+        errorList.innerHTML = '';
+        errors.forEach(error => {
+            const li = document.createElement('li');
+            li.textContent = error;
+            errorList.appendChild(li);
+        });
+
+        errorContainer.classList.add('show');
+
+        // Прокрутка к ошибкам
+        errorContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function clearErrors() {
+        const errorContainer = document.getElementById('validationErrors');
+        errorContainer.classList.remove('show');
+
+        // Убираем классы ошибок со всех полей
+        document.querySelectorAll('.input-error').forEach(el => {
+            el.classList.remove('input-error');
+        });
+        document.querySelectorAll('.has-error').forEach(el => {
+            el.classList.remove('has-error');
+        });
+    }
+
+    function addFieldError(element, message) {
+        element.classList.add('input-error');
+
+        // Добавляем сообщение об ошибке под полем, если его нет
+        let errorSpan = element.parentElement.querySelector('.dynamic-field-error');
+        if (!errorSpan) {
+            errorSpan = document.createElement('span');
+            errorSpan.className = 'field-error dynamic-field-error';
+            element.parentElement.appendChild(errorSpan);
+        }
+        errorSpan.textContent = message;
+    }
+
+    function clearFieldErrors() {
+        document.querySelectorAll('.dynamic-field-error').forEach(el => el.remove());
+    }
+
+    // Добавление нового вопроса
+    function addQuestion() {
+        const container = document.getElementById('questions-container');
+        const index = questionCounter;
+
+        const questionHtml = `
+        <div id="question-${index}" class="question-card">
+            <div class="question-header">
+                <span class="question-number">Вопрос ${index + 1}</span>
+                <button type="button" class="remove-question" onclick="removeQuestion(${index})">🗑️</button>
+            </div>
+
+            <div class="form-group">
+                <label for="questions[${index}].text" class="form-label">Текст вопроса *</label>
+                <input type="text"
+                       name="questions[${index}].text"
+                       id="questions[${index}].text"
+                       class="form-input question-text-input"
+                       placeholder="Введите текст вопроса">
+            </div>
+
+            <div>
+                <label class="form-label">Тип вопроса</label>
+                <select name="questions[${index}].type"
+                        class="question-type-select"
+                        onchange="changeQuestionType(${index}, this.value)">
+                    <option value="SINGLE">📻 Одиночный выбор</option>
+                    <option value="MULTIPLE">✅ Множественный выбор</option>
+                    <option value="TEXT">📝 Текстовый ответ</option>
+                </select>
+
+                <label class="required-checkbox">
+                    <input type="checkbox" name="questions[${index}].required" checked value="true">
+                    <span>Обязательный вопрос</span>
+                </label>
+            </div>
+
+            <div id="options-container-${index}" class="options-container">
+                <div class="options-list" id="options-list-${index}">
+                    <div id="option-${index}-0" class="option-item">
+                        <input type="text"
+                               name="questions[${index}].options[0].text"
+                               class="option-input"
+                               placeholder="Вариант ответа">
+                        <button type="button" class="remove-option" onclick="removeOption(${index}, 0)">✕</button>
+                    </div>
+                </div>
+                <button type="button" class="add-option-btn" onclick="addOption(${index})">
+                    + Добавить вариант
+                </button>
+            </div>
+        </div>
+    `;
+
+        container.insertAdjacentHTML('beforeend', questionHtml);
+        questionCounter++;
+        updateQuestionNumbers();
+    }
+
+    // Удаление вопроса
+    function removeQuestion(index) {
+        const question = document.getElementById(`question-${index}`);
+        if (question && confirm('Удалить этот вопрос?')) {
+            question.remove();
+            updateQuestionNumbers();
+        }
+    }
+
+    // Обновление нумерации вопросов
+    function updateQuestionNumbers() {
+        const questions = document.querySelectorAll('.question-card');
+        questions.forEach((q, idx) => {
+            const numberSpan = q.querySelector('.question-number');
+            if (numberSpan) {
+                numberSpan.textContent = `Вопрос ${idx + 1}`;
+            }
+            // Обновляем ID и name атрибуты для всех элементов
+            const textInput = q.querySelector('.question-text-input');
+            if (textInput) {
+                textInput.id = `questions[${idx}].text`;
+                textInput.name = `questions[${idx}].text`;
+            }
+
+            const typeSelect = q.querySelector('.question-type-select');
+            if (typeSelect) {
+                typeSelect.name = `questions[${idx}].type`;
+            }
+
+            const requiredCheckbox = q.querySelector('.required-checkbox input');
+            if (requiredCheckbox) {
+                requiredCheckbox.name = `questions[${idx}].required`;
+            }
+
+            const optionsContainer = q.querySelector('.options-container');
+            if (optionsContainer && optionsContainer.id) {
+                const oldId = optionsContainer.id;
+                const newId = `options-container-${idx}`;
+                optionsContainer.id = newId;
+
+                // Обновляем обработчики для кнопок
+                const addBtn = optionsContainer.querySelector('.add-option-btn');
+                if (addBtn) {
+                    addBtn.setAttribute('onclick', `addOption(${idx})`);
+                }
+            }
+
+            const optionsList = q.querySelector('.options-list');
+            if (optionsList && optionsList.id) {
+                optionsList.id = `options-list-${idx}`;
+
+                // Обновляем варианты ответов
+                const options = optionsList.querySelectorAll('.option-item');
+                options.forEach((opt, optIdx) => {
+                    const input = opt.querySelector('.option-input');
+                    if (input) {
+                        input.name = `questions[${idx}].options[${optIdx}].text`;
+                    }
+                    opt.id = `option-${idx}-${optIdx}`;
+                    const removeBtn = opt.querySelector('.remove-option');
+                    if (removeBtn) {
+                        removeBtn.setAttribute('onclick', `removeOption(${idx}, ${optIdx})`);
+                    }
+                });
+            }
+        });
+    }
+
+    // Изменение типа вопроса
+    function changeQuestionType(questionIndex, type) {
+        const optionsContainer = document.getElementById(`options-container-${questionIndex}`);
+        if (type === 'TEXT') {
+            optionsContainer.classList.add('hidden-options');
+            optionsContainer.style.display = 'none';
+        } else {
+            optionsContainer.classList.remove('hidden-options');
+            optionsContainer.style.display = 'block';
+        }
+    }
+
+    // Добавление варианта ответа
+    function addOption(questionIndex) {
+        const optionsList = document.getElementById(`options-list-${questionIndex}`);
+        const optionCount = optionsList.children.length;
+
+        const optionHtml = `
+        <div id="option-${questionIndex}-${optionCount}" class="option-item">
+            <input type="text"
+                   name="questions[${questionIndex}].options[${optionCount}].text"
+                   class="option-input"
+                   placeholder="Вариант ответа">
+            <button type="button" class="remove-option" onclick="removeOption(${questionIndex}, ${optionCount})">✕</button>
+        </div>
+    `;
+
+        optionsList.insertAdjacentHTML('beforeend', optionHtml);
+    }
+
+    // Удаление варианта ответа
+    function removeOption(questionIndex, optionIndex) {
+        const option = document.getElementById(`option-${questionIndex}-${optionIndex}`);
+        if (option) {
+            const optionsList = document.getElementById(`options-list-${questionIndex}`);
+            if (optionsList.children.length > 1) {
+                option.remove();
+                // Переиндексация вариантов
+                const remainingOptions = optionsList.children;
+                for (let i = 0; i < remainingOptions.length; i++) {
+                    const opt = remainingOptions[i];
+                    const input = opt.querySelector('input');
+                    if (input) {
+                        input.name = `questions[${questionIndex}].options[${i}].text`;
+                    }
+                    opt.id = `option-${questionIndex}-${i}`;
+                    const removeBtn = opt.querySelector('.remove-option');
+                    if (removeBtn) {
+                        removeBtn.setAttribute('onclick', `removeOption(${questionIndex}, ${i})`);
+                    }
+                }
+            } else {
+                // Показываем ошибку, если пытаются удалить последний вариант
+                const errors = ['У вопроса должен быть хотя бы один вариант ответа'];
+                showErrors(errors);
+
+                // Подсвечиваем единственный вариант
+                const lastOption = optionsList.querySelector('.option-input');
+                if (lastOption) {
+                    addFieldError(lastOption, 'Добавьте хотя бы один вариант ответа');
+                }
+            }
+        }
+    }
+
+    // Проверка на пустые варианты ответов
+    function checkEmptyOptions() {
+        const errors = [];
+        const questions = document.querySelectorAll('.question-card');
+
+        questions.forEach((question, idx) => {
+            const typeSelect = question.querySelector('.question-type-select');
+            if (typeSelect && typeSelect.value !== 'TEXT') {
+                const options = question.querySelectorAll('.option-input');
+                let hasEmptyOption = false;
+                let emptyOptionIndex = -1;
+
+                options.forEach((opt, optIdx) => {
+                    if (!opt.value.trim()) {
+                        hasEmptyOption = true;
+                        if (emptyOptionIndex === -1) {
+                            emptyOptionIndex = optIdx;
+                        }
+                    }
+                });
+
+                if (hasEmptyOption) {
+                    errors.push(`Вопрос ${idx + 1}: заполните все варианты ответа или удалите пустые`);
+
+                    // Подсвечиваем пустые варианты
+                    options.forEach((opt, optIdx) => {
+                        if (!opt.value.trim()) {
+                            addFieldError(opt, `Вопрос ${idx + 1}: вариант ответа ${optIdx + 1} не может быть пустым`);
+                        }
+                    });
+                    question.classList.add('has-error');
+                }
+            }
+        });
+
+        return errors;
+    }
+
+    // Валидация перед отправкой
+    document.getElementById('pollForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Очищаем предыдущие ошибки
+        clearErrors();
+        clearFieldErrors();
+
+        const errors = [];
+
+        // Валидация названия опроса
+        const title = document.getElementById('title');
+        if (!title.value.trim()) {
+            errors.push('Введите название опроса');
+            addFieldError(title, 'Название опроса обязательно');
+        }
+
+        // Валидация вопросов
+        const questions = document.querySelectorAll('.question-card');
+        if (questions.length === 0) {
+            errors.push('Добавьте хотя бы один вопрос');
+        }
+
+        questions.forEach((question, idx) => {
+            const textInput = question.querySelector('.question-text-input');
+            let hasQuestionError = false;
+
+            // Проверка текста вопроса
+            if (!textInput.value.trim()) {
+                errors.push(`Вопрос ${idx + 1}: введите текст вопроса`);
+                addFieldError(textInput, `Введите текст вопроса ${idx + 1}`);
+                hasQuestionError = true;
+            }
+
+            // Проверка вариантов ответов
+            const typeSelect = question.querySelector('.question-type-select');
+            if (typeSelect && typeSelect.value !== 'TEXT') {
+                const options = question.querySelectorAll('.option-input');
+                let hasValidOption = false;
+                let hasEmptyOption = false;
+
+                options.forEach((opt, optIdx) => {
+                    if (opt.value.trim()) {
+                        hasValidOption = true;
+                    } else {
+                        hasEmptyOption = true;
+                        addFieldError(opt, `Вопрос ${idx + 1}: вариант ответа ${optIdx + 1} не может быть пустым`);
+                    }
+                });
+
+                if (!hasValidOption) {
+                    errors.push(`Вопрос ${idx + 1}: добавьте хотя бы один вариант ответа`);
+                    hasQuestionError = true;
+                } else if (hasEmptyOption) {
+                    errors.push(`Вопрос ${idx + 1}: заполните или удалите пустые варианты ответа`);
+                    hasQuestionError = true;
+                }
+            }
+
+            if (hasQuestionError) {
+                question.classList.add('has-error');
+            }
+        });
+
+        // Если есть ошибки - показываем и не отправляем
+        if (errors.length > 0) {
+            showErrors(errors);
+            return false;
+        }
+
+        // Отправляем форму
+        this.submit();
+    });
+
+    // Убираем подсветку ошибок при вводе
+    document.addEventListener('input', function(e) {
+        if (e.target.classList && e.target.classList.contains('input-error')) {
+            e.target.classList.remove('input-error');
+            const errorSpan = e.target.parentElement.querySelector('.dynamic-field-error');
+            if (errorSpan) errorSpan.remove();
+        }
+
+        if (e.target.classList && e.target.classList.contains('question-card')) {
+            e.target.classList.remove('has-error');
+        }
+
+        // Если пользователь заполняет пустой вариант ответа - убираем ошибку
+        if (e.target.classList && e.target.classList.contains('option-input')) {
+            if (e.target.value.trim()) {
+                e.target.classList.remove('input-error');
+                const errorSpan = e.target.parentElement.querySelector('.dynamic-field-error');
+                if (errorSpan) errorSpan.remove();
+            }
+        }
+    });
+
+    // Счётчики символов
+    document.getElementById('title')?.addEventListener('input', function() {
+        const counter = document.getElementById('titleCounter');
+        if (counter) counter.textContent = this.value.length;
+
+        // Убираем ошибку при вводе
+        if (this.value.trim()) {
+            this.classList.remove('input-error');
+            const errorSpan = this.parentElement.querySelector('.dynamic-field-error');
+            if (errorSpan) errorSpan.remove();
+        }
+    });
+
+    document.getElementById('description')?.addEventListener('input', function() {
+        const counter = document.getElementById('descCounter');
+        if (counter) counter.textContent = this.value.length;
+    });
+
+    // Инициализация
+    window.addEventListener('DOMContentLoaded', function() {
+        const titleInput = document.getElementById('title');
+        const descInput = document.getElementById('description');
+        if (titleInput) {
+            document.getElementById('titleCounter').textContent = titleInput.value.length;
+        }
+        if (descInput) {
+            document.getElementById('descCounter').textContent = descInput.value.length;
+        }
+
+        if (document.querySelectorAll('.question-card').length === 0) {
+            addQuestion();
+        }
+    });
+</script>
+</body>
+</html>

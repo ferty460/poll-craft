@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои опросы - PollCraft</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/poll.css}">
+</head>
+<body>
+<div class="page">
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container header__inner">
+            <a th:href="@{/}" class="logo">
+                <span class="auth-logo__icon">📋</span>
+                <span class="auth-logo__text">PollCraft</span>
+            </a>
+
+            <nav class="nav" sec:authorize="isAnonymous()">
+                <a th:href="@{/auth/login}" class="nav__link">Вход</a>
+                <a th:href="@{/auth/register}" class="nav__link nav__link--primary">Регистрация</a>
+            </nav>
+
+            <nav class="nav" sec:authorize="isAuthenticated()">
+                <span class="nav__greeting">Привет, <span th:text="${username}"></span>!</span>
+                <a th:href="@{/polls/my}" class="nav__link">Мои опросы</a>
+                <a th:href="@{/polls/create}" class="nav__link nav__link--primary">Создать</a>
+                <a th:href="@{/auth/logout}" class="nav__link">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основной блок -->
+    <main class="main">
+        <div class="container">
+            <!-- Сообщения -->
+            <div th:if="${param.success}" class="alert alert-success">
+                ✅ <span th:text="${param.success}">Опрос успешно создан!</span>
+            </div>
+            <div th:if="${param.deleted}" class="alert alert-success">
+                🗑️ Опрос успешно удалён
+            </div>
+            <div th:if="${param.toggled}" class="alert alert-info">
+                🔄 Статус опроса изменён
+            </div>
+            <div th:if="${param.error}" class="alert alert-error">
+                ⚠️ <span th:text="${param.error}">Произошла ошибка</span>
+            </div>
+
+            <!-- Заголовок -->
+            <div class="polls-header">
+                <h1 class="polls-title">📊 Мои опросы</h1>
+                <a th:href="@{/polls/create}" class="create-btn">
+                    ➕ Создать новый опрос
+                </a>
+            </div>
+
+            <!-- Список опросов -->
+            <div th:if="${!polls.empty}" class="polls-grid">
+                <div th:each="poll : ${polls}" class="poll-card">
+                    <div class="poll-card-header">
+                        <div class="poll-card-title">
+                            <span th:text="${poll.title}">Название опроса</span>
+                            <span th:class="${poll.isActive} ? 'poll-status status-active' : 'poll-status status-closed'"
+                                  th:text="${poll.isActive} ? 'Активен' : 'Закрыт'">
+                                Активен
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="poll-card-body">
+                        <div class="poll-stats">
+                            <div class="stat">
+                                <div class="my-stat-number" th:text="${poll.questions.size()}">0</div>
+                                <div class="my-stat-label">Вопросов</div>
+                            </div>
+                            <div class="stat">
+                                <div class="my-stat-number" th:text="${poll.totalVotes != null ? poll.totalVotes : 0}">0</div>
+                                <div class="my-stat-label">Голосов</div>
+                            </div>
+                        </div>
+
+                        <div class="poll-actions">
+                            <a th:href="@{|/polls/${poll.id}|}" class="action-btn action-btn-view">
+                                Просмотр
+                            </a>
+                            <a th:href="@{|/polls/${poll.id}/results|}" class="action-btn action-btn-results">
+                                Результаты
+                            </a>
+
+                            <!-- Форма изменения статуса -->
+                            <form th:action="@{|/polls/${poll.id}/toggle|}" method="post" class="toggle-form">
+                                <button type="submit" class="action-btn action-btn-toggle"
+                                        th:title="${poll.isActive} ? 'Закрыть опрос' : 'Открыть опрос'">
+                                    <span th:text="${poll.isActive} ? 'Закрыть' : 'Открыть'">
+                                        Закрыть
+                                    </span>
+                                </button>
+                            </form>
+
+                            <!-- Форма удаления -->
+                            <form th:action="@{|/polls/${poll.id}/delete|}" method="post" class="delete-form"
+                                  onsubmit="return confirmDelete('${poll.title}')">
+                                <button type="submit" class="action-btn action-btn-delete">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Пустое состояние -->
+            <div th:if="${polls.empty}" class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h2 class="empty-title">У вас пока нет опросов</h2>
+                <p class="empty-text">Создайте свой первый опрос и начните собирать мнения!</p>
+                <a th:href="@{/polls/create}" class="btn btn-primary btn--large">➕ Создать опрос</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__copyright">
+                PollCraft
+            </div>
+            <div class="footer__links">
+                <a th:href="@{https://github.com/ferty460/poll-craft}" class="footer__link">Исходный код</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>

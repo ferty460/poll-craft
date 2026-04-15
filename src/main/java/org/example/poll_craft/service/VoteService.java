@@ -75,6 +75,9 @@ public class VoteService {
             String answerValue = answers.get(answerKey);
 
             if (answerValue == null || answerValue.trim().isEmpty()) {
+                if (question.getRequired()) {
+                    throw new IllegalStateException("Ответ на вопрос обязателен: " + question.getText());
+                }
                 continue;
             }
 
@@ -85,23 +88,25 @@ public class VoteService {
 
             if (question.getType() == QuestionType.TEXT) {
                 answer.setTextAnswer(answerValue);
-                answerRepository.save(answer);
-            } else if (question.getType() == QuestionType.SINGLE) {
-                Option option = optionRepository.findById(Long.parseLong(answerValue))
-                        .orElseThrow(() -> new RuntimeException("Option not found"));
-                answer.setOption(option);
-                answerRepository.save(answer);
-            } else if (question.getType() == QuestionType.MULTIPLE) {
-                String[] optionIds = answerValue.split(",");
-                for (String optionId : optionIds) {
-                    Answer multiAnswer = Answer.builder()
-                            .vote(vote)
-                            .question(question)
-                            .option(optionRepository.findById(Long.parseLong(optionId)).orElse(null))
-                            .build();
-                    answerRepository.save(multiAnswer);
+            } else {
+                // Для SINGLE/MULTIPLE
+                if (question.getType() == QuestionType.SINGLE) {
+                    Option option = findOptionById(Long.parseLong(answerValue));
+                    answer.setOption(option);
+                } else { // MULTIPLE
+                    String[] optionIds = answerValue.split(",");
+                    for (String optionId : optionIds) {
+                        Answer multiAnswer = Answer.builder()
+                                .vote(vote)
+                                .question(question)
+                                .option(findOptionById(Long.parseLong(optionId)))
+                                .build();
+                        answerRepository.save(multiAnswer);
+                    }
+                    continue;
                 }
             }
+            answerRepository.save(answer);
         }
     }
 

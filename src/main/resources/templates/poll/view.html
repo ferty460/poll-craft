@@ -69,45 +69,42 @@
                             </div>
                         </div>
 
-                        <!-- Убираем проверку required, все вопросы необязательные -->
                         <div th:each="question, stat : ${poll.questions}">
-                            <div class="question-block" th:data-question-id="${question.id}" th:data-question-type="${question.type.name()}">
+                            <div class="question-block">
                                 <div class="question-text">
                                     <span th:text="${stat.index + 1} + '. ' + ${question.text}"></span>
+                                    <span th:if="${question.required}" class="required-badge">*</span>
                                 </div>
 
-                                <!-- SINGLE (одиночный выбор) -->
                                 <div th:if="${question.type.name() == 'SINGLE'}" class="options-group">
                                     <div th:each="option : ${question.options}" class="option-radio">
                                         <input type="radio"
                                                th:name="'question_' + ${question.id}"
                                                th:id="'q' + ${question.id} + '_opt' + ${option.id}"
                                                th:value="${option.id}"
-                                               class="radio-input">
+                                               required>
                                         <label th:for="'q' + ${question.id} + '_opt' + ${option.id}"
                                                th:text="${option.text}">Вариант</label>
                                     </div>
                                 </div>
 
-                                <!-- MULTIPLE (множественный выбор) -->
                                 <div th:if="${question.type.name() == 'MULTIPLE'}" class="options-group">
                                     <div th:each="option : ${question.options}" class="option-checkbox">
                                         <input type="checkbox"
                                                th:name="'question_' + ${question.id}"
                                                th:id="'q' + ${question.id} + '_opt' + ${option.id}"
-                                               th:value="${option.id}"
-                                               class="checkbox-input">
+                                               th:value="${option.id}">
                                         <label th:for="'q' + ${question.id} + '_opt' + ${option.id}"
                                                th:text="${option.text}">Вариант</label>
                                     </div>
                                 </div>
 
-                                <!-- TEXT (текстовый ответ) -->
                                 <div th:if="${question.type.name() == 'TEXT'}">
                                     <textarea th:name="'question_' + ${question.id}"
                                               class="text-answer"
                                               rows="4"
-                                              placeholder="Введите ваш ответ (необязательно)"></textarea>
+                                              placeholder="Введите ваш ответ..."
+                                              th:required="${question.required}"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -163,13 +160,56 @@
         }, 2000);
     }
 
-    // Упрощённый обработчик отправки формы (без проверки required)
     document.getElementById('voteForm')?.addEventListener('submit', function(e) {
-        // Обработка MULTIPLE вопросов (checkboxes)
-        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        const radioGroups = new Map();
+
+        const radios = document.querySelectorAll('input[type="radio"]');
+        radios.forEach(radio => {
+            const name = radio.name;
+            if (!radioGroups.has(name)) {
+                radioGroups.set(name, false);
+            }
+            if (radio.checked) {
+                radioGroups.set(name, true);
+            }
+        });
+
+        let hasError = false;
+        radioGroups.forEach((isChecked, name) => {
+            if (!isChecked) {
+                const questionBlock = document.querySelector(`input[name="${name}"]`)?.closest('.question-block');
+                if (questionBlock && questionBlock.querySelector('.required-badge')) {
+                    alert('Пожалуйста, ответьте на все обязательные вопросы');
+                    hasError = true;
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+
+        const textAreas = document.querySelectorAll('textarea.text-answer');
+        textAreas.forEach(textarea => {
+            const questionBlock = textarea.closest('.question-block');
+            const isRequired = questionBlock?.querySelector('.required-badge');
+            if (isRequired && !textarea.value.trim()) {
+                alert('Пожалуйста, заполните все обязательные текстовые поля');
+                textarea.focus();
+                hasError = true;
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        if (hasError) {
+            e.preventDefault();
+        }
+    });
+
+    document.getElementById('voteForm')?.addEventListener('submit', function(e) {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
         const checkboxGroups = new Map();
 
-        allCheckboxes.forEach(checkbox => {
+        checkboxes.forEach(checkbox => {
             const name = checkbox.name;
             if (!checkboxGroups.has(name)) {
                 checkboxGroups.set(name, []);
@@ -179,24 +219,18 @@
             }
         });
 
-        // Создаём скрытые поля для MULTIPLE вопросов
         checkboxGroups.forEach((values, name) => {
             if (values.length > 0) {
-                const existingHidden = document.querySelector(`input[type="hidden"][name="${name}"]`);
-                if (existingHidden) existingHidden.remove();
-
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
                 hiddenInput.name = name;
                 hiddenInput.value = values.join(',');
-                document.getElementById('voteForm').appendChild(hiddenInput);
 
-                // Отключаем оригинальные чекбоксы
                 document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
-                    if (cb.type === 'checkbox') {
-                        cb.disabled = true;
-                    }
+                    cb.disabled = true;
                 });
+
+                document.getElementById('voteForm').appendChild(hiddenInput);
             }
         });
     });

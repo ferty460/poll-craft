@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS questions (
     text TEXT NOT NULL,
     type VARCHAR(20) NOT NULL,
     display_order INT DEFAULT 0,
-    required BOOLEAN DEFAULT FALSE,
+    required BOOLEAN DEFAULT TRUE,
     CONSTRAINT fk_questions_poll FOREIGN KEY (poll_id) REFERENCES polls(id) ON DELETE CASCADE,
     CONSTRAINT chk_question_type CHECK (type IN ('SINGLE', 'MULTIPLE', 'TEXT'))
 );

@@ -33,7 +33,7 @@ public class Question {
     @Column(name = "display_order")
     private Integer displayOrder = 0;
 
-    private Boolean required = false;
+    private Boolean required = true;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("displayOrder ASC")

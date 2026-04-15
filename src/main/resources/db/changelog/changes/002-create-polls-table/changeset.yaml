@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-polls-table
+      author: vladimir_r
+      comment: Создание таблицы опросов
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/002-create-polls-table/create-polls-table.sql

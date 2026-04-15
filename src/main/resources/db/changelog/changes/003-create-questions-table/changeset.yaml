@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-questions-table
+      author: vladimir_r
+      comment: Создание таблицы вопросов
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/003-create-questions-table/create-questions-table.sql

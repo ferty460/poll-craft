@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-answers-table
+      author: vladimir_r
+      comment: Создание таблицы ответов на вопросы
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/006-create-answers-table/create-answers-table.sql

@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-options-table
+      author: vladimir_r
+      comment: Создание таблицы вариантов ответа
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/004-create-options-table/create-options-table.sql

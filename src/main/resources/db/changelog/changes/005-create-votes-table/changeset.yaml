@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-votes-table
+      author: vladimir_r
+      comment: Создание таблицы голосований
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/005-create-votes-table/create-votes-table.sql

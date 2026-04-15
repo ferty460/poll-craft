@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.poll_craft.model.Poll;
+import org.example.poll_craft.model.Question;
+import org.example.poll_craft.model.QuestionType;
 import org.example.poll_craft.model.UserPrincipal;
 import org.example.poll_craft.model.dto.CreatePollRequest;
 import org.example.poll_craft.repository.VoteRepository;
@@ -29,7 +31,6 @@ public class PollController {
     private final VoteService voteService;
     private final VoteRepository voteRepository;
 
-    // Страница создания опроса
     @GetMapping("/create")
     public String createPollForm(Model model, @AuthenticationPrincipal UserPrincipal principal) {
         CreatePollRequest request = CreatePollRequest.builder()
@@ -58,7 +59,6 @@ public class PollController {
         return "poll/create";
     }
 
-    // Обработка создания опроса
     @PostMapping("/create")
     public String createPoll(
             @Valid @ModelAttribute("pollRequest") CreatePollRequest request,
@@ -75,20 +75,18 @@ public class PollController {
         return "redirect:/polls/" + poll.getId();
     }
 
-    // Страница просмотра опроса (голосование)
     @GetMapping("/{id}")
     public String viewPoll(
-            @PathVariable String id,
+            @PathVariable UUID id,
             HttpServletRequest request,
             @AuthenticationPrincipal UserPrincipal principal,
             Model model
     ) {
         try {
-            UUID pollId = UUID.fromString(id);
-            Poll poll = pollService.getPoll(pollId);
+            Poll poll = pollService.getPoll(id);
             String ipAddress = getClientIp(request);
             String sessionId = request.getSession().getId();
-            boolean hasVoted = voteService.hasVoted(pollId, ipAddress, sessionId, principal);
+            boolean hasVoted = voteService.hasVoted(id, ipAddress, sessionId, principal);
 
             model.addAttribute("poll", poll);
             model.addAttribute("hasVoted", hasVoted);
@@ -102,13 +100,11 @@ public class PollController {
         }
     }
 
-    // Страница результатов
     @GetMapping("/{id}/results")
-    public String viewResults(@PathVariable String id, @AuthenticationPrincipal UserPrincipal principal, Model model) {
-        UUID pollId = UUID.fromString(id);
-        Poll poll = pollService.getPoll(pollId);
-        List<Map<String, Object>> results = voteService.getResults(pollId);
-        long totalVotes = voteRepository.countByPollId(pollId);
+    public String viewResults(@PathVariable UUID id, @AuthenticationPrincipal UserPrincipal principal, Model model) {
+        Poll poll = pollService.getPoll(id);
+        List<Map<String, Object>> results = voteService.getResults(id);
+        long totalVotes = voteRepository.countByPollId(id);
 
         if (principal != null) {
             model.addAttribute("username", principal.user().getUsername());
@@ -120,16 +116,14 @@ public class PollController {
         return "poll/results";
     }
 
-    // Обработка голосования
     @PostMapping("/{id}/vote")
     public String submitVote(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @RequestParam Map<String, String> allParams,
             HttpServletRequest request,
             @AuthenticationPrincipal UserPrincipal principal,
             RedirectAttributes redirectAttributes
     ) {
-        UUID pollId = UUID.fromString(id);
         Map<String, String> answers = new HashMap<>();
 
         for (Map.Entry<String, String> entry : allParams.entrySet()) {
@@ -142,7 +136,7 @@ public class PollController {
         String sessionId = request.getSession().getId();
 
         try {
-            voteService.submitVote(pollId, answers, ipAddress, sessionId, principal);
+            voteService.submitVote(id, answers, ipAddress, sessionId, principal);
             redirectAttributes.addFlashAttribute("success", "Ваш голос учтён!");
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -152,7 +146,6 @@ public class PollController {
         return "redirect:/polls/" + id + "/results";
     }
 
-    // Мои опросы
     @GetMapping("/my")
     public String myPolls(@AuthenticationPrincipal UserPrincipal principal, Model model) {
         List<Poll> polls = pollService.getUserPolls(principal.getUsername());
@@ -170,13 +163,12 @@ public class PollController {
 
     @PostMapping("/{id}/delete")
     public String deletePoll(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            UUID pollId = UUID.fromString(id);
-            pollService.deletePoll(pollId, userDetails.getUsername());
+            pollService.deletePoll(id, userDetails.getUsername());
             redirectAttributes.addFlashAttribute("deleted", "true");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -187,13 +179,12 @@ public class PollController {
 
     @PostMapping("/{id}/toggle")
     public String togglePoll(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            UUID pollId = UUID.fromString(id);
-            pollService.togglePollStatus(pollId, userDetails.getUsername());
+            pollService.togglePollStatus(id, userDetails.getUsername());
             redirectAttributes.addFlashAttribute("toggled", "true");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

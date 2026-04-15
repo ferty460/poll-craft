@@ -42,6 +42,7 @@ public class CustomErrorController implements ErrorController {
         model.addAttribute("status", 500);
         model.addAttribute("error", "Внутренняя ошибка");
         model.addAttribute("message", "Произошла непредвиденная ошибка");
+
         return "error";
     }
 

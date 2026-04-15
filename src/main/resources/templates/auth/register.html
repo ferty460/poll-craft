@@ -18,10 +18,8 @@
             <p class="auth-subtitle">Присоединяйтесь к PollCraft и создавайте опросы</p>
         </div>
 
-        <!-- Сообщения об ошибках -->
         <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
-        <!-- Форма регистрации -->
         <form th:action="@{/auth/register}"
               th:object="${registrationRequest}"
               method="post"
@@ -107,7 +105,6 @@
         input.setAttribute('type', type);
     }
 
-    // Валидация совпадения паролей
     const form = document.getElementById('registerForm');
     const password = document.getElementById('password');
     const confirmPassword = document.getElementById('confirmPassword');

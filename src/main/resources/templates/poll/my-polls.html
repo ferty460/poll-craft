@@ -9,7 +9,6 @@
 </head>
 <body>
 <div class="page">
-    <!-- Шапка -->
     <header class="header">
         <div class="container header__inner">
             <a th:href="@{/}" class="logo">
@@ -31,10 +30,8 @@
         </div>
     </header>
 
-    <!-- Основной блок -->
     <main class="main">
         <div class="container">
-            <!-- Сообщения -->
             <div th:if="${param.success}" class="alert alert-success">
                 ✅ <span th:text="${param.success}">Опрос успешно создан!</span>
             </div>
@@ -48,7 +45,6 @@
                 ⚠️ <span th:text="${param.error}">Произошла ошибка</span>
             </div>
 
-            <!-- Заголовок -->
             <div class="polls-header">
                 <h1 class="polls-title">📊 Мои опросы</h1>
                 <a th:href="@{/polls/create}" class="create-btn">
@@ -56,7 +52,6 @@
                 </a>
             </div>
 
-            <!-- Список опросов -->
             <div th:if="${!polls.empty}" class="polls-grid">
                 <div th:each="poll : ${polls}" class="poll-card">
                     <div class="poll-card-header">
@@ -89,7 +84,6 @@
                                 Результаты
                             </a>
 
-                            <!-- Форма изменения статуса -->
                             <form th:action="@{|/polls/${poll.id}/toggle|}" method="post" class="toggle-form">
                                 <button type="submit" class="action-btn action-btn-toggle"
                                         th:title="${poll.isActive} ? 'Закрыть опрос' : 'Открыть опрос'">
@@ -99,7 +93,6 @@
                                 </button>
                             </form>
 
-                            <!-- Форма удаления -->
                             <form th:action="@{|/polls/${poll.id}/delete|}" method="post" class="delete-form"
                                   onsubmit="return confirmDelete('${poll.title}')">
                                 <button type="submit" class="action-btn action-btn-delete">
@@ -111,7 +104,6 @@
                 </div>
             </div>
 
-            <!-- Пустое состояние -->
             <div th:if="${polls.empty}" class="empty-state">
                 <div class="empty-icon">📭</div>
                 <h2 class="empty-title">У вас пока нет опросов</h2>
@@ -121,7 +113,6 @@
         </div>
     </main>
 
-    <!-- Подвал -->
     <footer class="footer">
         <div class="container footer__inner">
             <div class="footer__copyright">

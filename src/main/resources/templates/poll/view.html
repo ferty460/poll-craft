@@ -9,7 +9,6 @@
 </head>
 <body>
 <div class="page">
-    <!-- Шапка -->
     <header class="header">
         <div class="container header__inner">
             <a th:href="@{/}" class="logo">
@@ -31,10 +30,8 @@
         </div>
     </header>
 
-    <!-- Основной блок -->
     <main class="main">
         <div class="container">
-            <!-- Сообщения -->
             <div th:if="${param.voted}" class="alert alert-success" style="margin-bottom: 20px;">
                 ✅ Ваш голос успешно учтён!
             </div>
@@ -42,12 +39,10 @@
                 Ошибка
             </div>
 
-            <!-- Если опрос не активен -->
             <div th:if="${!poll.isActive}" class="alert alert-warning" style="margin-bottom: 20px;">
                 ⚠️ Этот опрос закрыт. Голосование недоступно.
             </div>
 
-            <!-- Если пользователь уже голосовал -->
             <div th:if="${hasVoted}" class="poll-container">
                 <div class="already-voted">
                     <div class="already-voted-icon">🗳️</div>
@@ -57,7 +52,6 @@
                 </div>
             </div>
 
-            <!-- Форма голосования (если не голосовал и опрос активен) -->
             <div th:unless="${hasVoted}" class="poll-container">
                 <div th:if="${!poll.isActive}" class="already-voted">
                     <div class="already-voted-icon">🔒</div>
@@ -75,7 +69,6 @@
                             </div>
                         </div>
 
-                        <!-- Вопросы -->
                         <div th:each="question, stat : ${poll.questions}">
                             <div class="question-block">
                                 <div class="question-text">
@@ -83,7 +76,6 @@
                                     <span th:if="${question.required}" class="required-badge">*</span>
                                 </div>
 
-                                <!-- Одиночный выбор (radio) -->
                                 <div th:if="${question.type.name() == 'SINGLE'}" class="options-group">
                                     <div th:each="option : ${question.options}" class="option-radio">
                                         <input type="radio"
@@ -96,7 +88,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Множественный выбор (checkbox) -->
                                 <div th:if="${question.type.name() == 'MULTIPLE'}" class="options-group">
                                     <div th:each="option : ${question.options}" class="option-checkbox">
                                         <input type="checkbox"
@@ -108,7 +99,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Текстовый ответ -->
                                 <div th:if="${question.type.name() == 'TEXT'}">
                                     <textarea th:name="'question_' + ${question.id}"
                                               class="text-answer"
@@ -126,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- Секция для копирования ссылки -->
             <div class="share-section">
                 <div class="share-title">🔗 Поделиться опросом</div>
                 <div class="share-link-container">
@@ -137,7 +126,6 @@
         </div>
     </main>
 
-    <!-- Подвал -->
     <footer class="footer">
         <div class="container footer__inner">
             <div class="footer__copyright">
@@ -151,7 +139,6 @@
 </div>
 
 <script>
-    // Установка ссылки для копирования
     window.addEventListener('DOMContentLoaded', function() {
         const shareLink = document.getElementById('shareLink');
         if (shareLink) {
@@ -159,14 +146,12 @@
         }
     });
 
-    // Копирование ссылки
     function copyShareLink() {
         const shareLink = document.getElementById('shareLink');
         shareLink.select();
         shareLink.setSelectionRange(0, 99999);
         document.execCommand('copy');
 
-        // Визуальная обратная связь
         const copyBtn = document.querySelector('.copy-btn');
         const originalText = copyBtn.textContent;
         copyBtn.textContent = 'Скопировано! ✅';
@@ -175,13 +160,9 @@
         }, 2000);
     }
 
-    // Валидация формы перед отправкой
     document.getElementById('voteForm')?.addEventListener('submit', function(e) {
-        // Проверяем, что выбран хотя бы один вариант для обязательных вопросов
         const radioGroups = new Map();
-        const checkboxGroups = new Map();
 
-        // Собираем radio группы (для SINGLE)
         const radios = document.querySelectorAll('input[type="radio"]');
         radios.forEach(radio => {
             const name = radio.name;
@@ -193,11 +174,9 @@
             }
         });
 
-        // Проверяем radio группы
         let hasError = false;
         radioGroups.forEach((isChecked, name) => {
             if (!isChecked) {
-                // Находим вопрос
                 const questionBlock = document.querySelector(`input[name="${name}"]`)?.closest('.question-block');
                 if (questionBlock && questionBlock.querySelector('.required-badge')) {
                     alert('Пожалуйста, ответьте на все обязательные вопросы');
@@ -208,7 +187,6 @@
             }
         });
 
-        // Проверяем текстовые поля
         const textAreas = document.querySelectorAll('textarea.text-answer');
         textAreas.forEach(textarea => {
             const questionBlock = textarea.closest('.question-block');
@@ -227,7 +205,6 @@
         }
     });
 
-    // Для MULTIPLE вопросов - собираем значения через запятую
     document.getElementById('voteForm')?.addEventListener('submit', function(e) {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
         const checkboxGroups = new Map();
@@ -242,7 +219,6 @@
             }
         });
 
-        // Создаём скрытые поля для значений MULTIPLE вопросов
         checkboxGroups.forEach((values, name) => {
             if (values.length > 0) {
                 const hiddenInput = document.createElement('input');
@@ -250,7 +226,6 @@
                 hiddenInput.name = name;
                 hiddenInput.value = values.join(',');
 
-                // Отключаем оригинальные чекбоксы, чтобы не отправляли множественные значения
                 document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
                     cb.disabled = true;
                 });

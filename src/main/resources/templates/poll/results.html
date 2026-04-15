@@ -10,7 +10,6 @@
 </head>
 <body>
 <div class="page">
-    <!-- Шапка -->
     <header class="header">
         <div class="container header__inner">
             <a th:href="@{/}" class="logo">
@@ -32,11 +31,9 @@
         </div>
     </header>
 
-    <!-- Основной блок -->
     <main class="main">
         <div class="container">
             <div class="results-container">
-                <!-- Заголовок опроса -->
                 <div class="poll-header">
                     <h1 class="poll-title" th:text="${poll.title}">Название опроса</h1>
                     <div class="poll-description" th:text="${poll.description} ?: 'Описание отсутствует'">
@@ -44,7 +41,6 @@
                     </div>
                 </div>
 
-                <!-- Статистика -->
                 <div class="stats-summary">
                     <div class="stat-card">
                         <div class="stat-number" th:text="${totalVotes}">0</div>
@@ -60,7 +56,6 @@
                     </div>
                 </div>
 
-                <!-- Результаты по вопросам -->
                 <div th:each="questionResult : ${results}" class="question-result">
                     <h3 class="question-title" th:text="${questionResult.get('text')}">Текст вопроса</h3>
                     <span class="question-type">
@@ -69,7 +64,6 @@
                         <span th:if="${questionResult.get('type') == 'TEXT'}">Текстовый ответ</span>
                     </span>
 
-                    <!-- Для SINGLE и MULTIPLE -->
                     <div th:if="${questionResult.get('type') != 'TEXT'}">
                         <div class="chart-container">
                             <canvas th:id="'chart-' + ${questionResult.get('questionId')}"></canvas>
@@ -101,7 +95,6 @@
                         </table>
                     </div>
 
-                    <!-- Для TEXT -->
                     <div th:if="${questionResult.get('type') == 'TEXT'}">
                         <div th:if="${questionResult.get('answers') != null and !questionResult.get('answers').isEmpty()}"
                              class="text-answers-list">
@@ -116,7 +109,6 @@
                     </div>
                 </div>
 
-                <!-- Кнопки действий -->
                 <div class="action-buttons">
                     <a th:href="@{/}" class="btn btn-secondary">На главную</a>
                 </div>
@@ -124,7 +116,6 @@
         </div>
     </main>
 
-    <!-- Подвал -->
     <footer class="footer">
         <div class="container footer__inner">
             <div class="footer__copyright">
@@ -138,10 +129,8 @@
 </div>
 
 <script>
-    // Хранение экземпляров диаграмм
     const charts = {};
 
-    // Функция для генерации случайных цветов
     function getChartColors(count) {
         const colors = [
             '#667eea', '#764ba2', '#f093fb', '#4facfe',
@@ -156,7 +145,6 @@
         return result;
     }
 
-    // Функция для создания диаграммы
     function createChart(chartId, options, type = 'bar') {
         const canvas = document.getElementById(chartId);
         if (!canvas) return null;
@@ -166,7 +154,6 @@
         const data = options.map(opt => opt.count);
         const backgroundColors = getChartColors(options.length);
 
-        // Уничтожаем старую диаграмму, если существует
         if (charts[chartId]) {
             charts[chartId].destroy();
         }
@@ -232,19 +219,14 @@
         return charts[chartId];
     }
 
-    // Загрузка данных и создание диаграмм
     window.addEventListener('DOMContentLoaded', function() {
-        // Получаем данные из атрибутов
         const questionResults = document.querySelectorAll('.question-result');
 
         questionResults.forEach((result, index) => {
             const chartCanvas = result.querySelector('canvas');
             if (chartCanvas) {
                 const chartId = chartCanvas.id;
-                // Получаем данные options из атрибута data-options
-                const optionsData = chartCanvas.getAttribute('th:data-options');
 
-                // Парсим данные из Thymeleaf
                 const optionsElement = result.querySelector('tbody');
                 if (optionsElement) {
                     const options = [];
@@ -259,14 +241,12 @@
                         }
                     });
 
-                    // Определяем тип диаграммы (для маленького количества вариантов - круговая)
                     const chartType = options.length <= 5 ? 'pie' : 'bar';
                     createChart(chartId, options, chartType);
                 }
             }
         });
 
-        // Анимация процентных баров
         const percentageBars = document.querySelectorAll('.percentage-fill');
         percentageBars.forEach(bar => {
             const width = bar.style.width;

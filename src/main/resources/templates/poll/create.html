@@ -6,7 +6,6 @@
     <title>Создание опроса - PollCraft</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        /* Дополнительные стили */
         .create-form {
             background: white;
             border-radius: 16px;
@@ -43,11 +42,6 @@
             position: relative;
             border: 1px solid #e9ecef;
             transition: all 0.2s;
-        }
-
-        .question-card.has-error {
-            border-color: #dc3545;
-            background: #fff5f5;
         }
 
         .question-header {
@@ -99,11 +93,6 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 14px;
-        }
-
-        .option-input.has-error {
-            border-color: #dc3545;
-            background: #fff5f5;
         }
 
         .remove-option {
@@ -190,10 +179,6 @@
             margin-top: 4px;
         }
 
-        .hidden-options {
-            display: none;
-        }
-
         textarea.form-input {
             resize: vertical;
             font-family: inherit;
@@ -212,7 +197,6 @@
             background: #5a67d8;
         }
 
-        /* Стили для ошибок */
         .error-container {
             background: #f8d7da;
             border: 1px solid #f5c6cb;
@@ -220,11 +204,6 @@
             padding: 15px 20px;
             margin-bottom: 20px;
             display: none;
-        }
-
-        .error-container.show {
-            display: block;
-            animation: shake 0.3s ease-in-out;
         }
 
         .error-title {
@@ -255,22 +234,10 @@
             color: #dc3545;
             margin-top: 5px;
         }
-
-        .input-error {
-            border-color: #dc3545 !important;
-            background: #fff5f5 !important;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
     </style>
 </head>
 <body>
 <div class="page">
-    <!-- Шапка -->
     <header class="header">
         <div class="container header__inner">
             <a th:href="@{/}" class="logo">
@@ -292,14 +259,12 @@
         </div>
     </header>
 
-    <!-- Основной блок -->
     <main class="main">
         <div class="container">
             <div class="create-form">
                 <h1 style="font-size: 32px; margin-bottom: 8px; text-align: center;">✨ Создание опроса</h1>
                 <p style="font-size: 16px; margin-bottom: 32px; text-align: center; color: #6c757d;">Заполните форму ниже, чтобы создать новый опрос</p>
 
-                <!-- Контейнер для ошибок валидации -->
                 <div id="validationErrors" class="error-container">
                     <div class="error-title">
                         <span>⚠️</span>
@@ -308,11 +273,9 @@
                     <ul id="errorList" class="error-list"></ul>
                 </div>
 
-                <!-- Thymeleaf ошибки -->
                 <div th:if="${param.error}" class="alert alert-error" th:text="${param.error}"></div>
 
                 <form th:action="@{/polls/create}" th:object="${pollRequest}" method="post" id="pollForm">
-                    <!-- Основная информация -->
                     <div class="form-section">
                         <div class="section-title">
                             <span>📝</span>
@@ -349,7 +312,6 @@
                         </div>
                     </div>
 
-                    <!-- Вопросы -->
                     <div class="form-section">
                         <div class="section-title">
                             <span>❓</span>
@@ -365,7 +327,6 @@
                         </button>
                     </div>
 
-                    <!-- Кнопки действий -->
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="window.history.back()">Отмена</button>
                         <button type="submit" class="btn btn-primary">🚀 Опубликовать опрос</button>
@@ -375,7 +336,6 @@
         </div>
     </main>
 
-    <!-- Подвал -->
     <footer class="footer">
         <div class="container footer__inner">
             <div class="footer__copyright">
@@ -390,9 +350,7 @@
 
 <script>
     let questionCounter = 0;
-    let validationErrors = [];
 
-    // Показать ошибки
     function showErrors(errors) {
         const errorContainer = document.getElementById('validationErrors');
         const errorList = document.getElementById('errorList');
@@ -406,7 +364,6 @@
 
         errorContainer.classList.add('show');
 
-        // Прокрутка к ошибкам
         errorContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -414,7 +371,6 @@
         const errorContainer = document.getElementById('validationErrors');
         errorContainer.classList.remove('show');
 
-        // Убираем классы ошибок со всех полей
         document.querySelectorAll('.input-error').forEach(el => {
             el.classList.remove('input-error');
         });
@@ -426,7 +382,6 @@
     function addFieldError(element, message) {
         element.classList.add('input-error');
 
-        // Добавляем сообщение об ошибке под полем, если его нет
         let errorSpan = element.parentElement.querySelector('.dynamic-field-error');
         if (!errorSpan) {
             errorSpan = document.createElement('span');
@@ -440,7 +395,6 @@
         document.querySelectorAll('.dynamic-field-error').forEach(el => el.remove());
     }
 
-    // Добавление нового вопроса
     function addQuestion() {
         const container = document.getElementById('questions-container');
         const index = questionCounter;
@@ -499,7 +453,6 @@
         updateQuestionNumbers();
     }
 
-    // Удаление вопроса
     function removeQuestion(index) {
         const question = document.getElementById(`question-${index}`);
         if (question && confirm('Удалить этот вопрос?')) {
@@ -508,7 +461,6 @@
         }
     }
 
-    // Обновление нумерации вопросов
     function updateQuestionNumbers() {
         const questions = document.querySelectorAll('.question-card');
         questions.forEach((q, idx) => {
@@ -516,7 +468,6 @@
             if (numberSpan) {
                 numberSpan.textContent = `Вопрос ${idx + 1}`;
             }
-            // Обновляем ID и name атрибуты для всех элементов
             const textInput = q.querySelector('.question-text-input');
             if (textInput) {
                 textInput.id = `questions[${idx}].text`;
@@ -535,11 +486,9 @@
 
             const optionsContainer = q.querySelector('.options-container');
             if (optionsContainer && optionsContainer.id) {
-                const oldId = optionsContainer.id;
                 const newId = `options-container-${idx}`;
                 optionsContainer.id = newId;
 
-                // Обновляем обработчики для кнопок
                 const addBtn = optionsContainer.querySelector('.add-option-btn');
                 if (addBtn) {
                     addBtn.setAttribute('onclick', `addOption(${idx})`);
@@ -550,7 +499,6 @@
             if (optionsList && optionsList.id) {
                 optionsList.id = `options-list-${idx}`;
 
-                // Обновляем варианты ответов
                 const options = optionsList.querySelectorAll('.option-item');
                 options.forEach((opt, optIdx) => {
                     const input = opt.querySelector('.option-input');
@@ -567,7 +515,6 @@
         });
     }
 
-    // Изменение типа вопроса
     function changeQuestionType(questionIndex, type) {
         const optionsContainer = document.getElementById(`options-container-${questionIndex}`);
         if (type === 'TEXT') {
@@ -579,7 +526,6 @@
         }
     }
 
-    // Добавление варианта ответа
     function addOption(questionIndex) {
         const optionsList = document.getElementById(`options-list-${questionIndex}`);
         const optionCount = optionsList.children.length;
@@ -597,14 +543,12 @@
         optionsList.insertAdjacentHTML('beforeend', optionHtml);
     }
 
-    // Удаление варианта ответа
     function removeOption(questionIndex, optionIndex) {
         const option = document.getElementById(`option-${questionIndex}-${optionIndex}`);
         if (option) {
             const optionsList = document.getElementById(`options-list-${questionIndex}`);
             if (optionsList.children.length > 1) {
                 option.remove();
-                // Переиндексация вариантов
                 const remainingOptions = optionsList.children;
                 for (let i = 0; i < remainingOptions.length; i++) {
                     const opt = remainingOptions[i];
@@ -619,11 +563,9 @@
                     }
                 }
             } else {
-                // Показываем ошибку, если пытаются удалить последний вариант
                 const errors = ['У вопроса должен быть хотя бы один вариант ответа'];
                 showErrors(errors);
 
-                // Подсвечиваем единственный вариант
                 const lastOption = optionsList.querySelector('.option-input');
                 if (lastOption) {
                     addFieldError(lastOption, 'Добавьте хотя бы один вариант ответа');
@@ -632,62 +574,20 @@
         }
     }
 
-    // Проверка на пустые варианты ответов
-    function checkEmptyOptions() {
-        const errors = [];
-        const questions = document.querySelectorAll('.question-card');
-
-        questions.forEach((question, idx) => {
-            const typeSelect = question.querySelector('.question-type-select');
-            if (typeSelect && typeSelect.value !== 'TEXT') {
-                const options = question.querySelectorAll('.option-input');
-                let hasEmptyOption = false;
-                let emptyOptionIndex = -1;
-
-                options.forEach((opt, optIdx) => {
-                    if (!opt.value.trim()) {
-                        hasEmptyOption = true;
-                        if (emptyOptionIndex === -1) {
-                            emptyOptionIndex = optIdx;
-                        }
-                    }
-                });
-
-                if (hasEmptyOption) {
-                    errors.push(`Вопрос ${idx + 1}: заполните все варианты ответа или удалите пустые`);
-
-                    // Подсвечиваем пустые варианты
-                    options.forEach((opt, optIdx) => {
-                        if (!opt.value.trim()) {
-                            addFieldError(opt, `Вопрос ${idx + 1}: вариант ответа ${optIdx + 1} не может быть пустым`);
-                        }
-                    });
-                    question.classList.add('has-error');
-                }
-            }
-        });
-
-        return errors;
-    }
-
-    // Валидация перед отправкой
     document.getElementById('pollForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Очищаем предыдущие ошибки
         clearErrors();
         clearFieldErrors();
 
         const errors = [];
 
-        // Валидация названия опроса
         const title = document.getElementById('title');
         if (!title.value.trim()) {
             errors.push('Введите название опроса');
             addFieldError(title, 'Название опроса обязательно');
         }
 
-        // Валидация вопросов
         const questions = document.querySelectorAll('.question-card');
         if (questions.length === 0) {
             errors.push('Добавьте хотя бы один вопрос');
@@ -697,14 +597,12 @@
             const textInput = question.querySelector('.question-text-input');
             let hasQuestionError = false;
 
-            // Проверка текста вопроса
             if (!textInput.value.trim()) {
                 errors.push(`Вопрос ${idx + 1}: введите текст вопроса`);
                 addFieldError(textInput, `Введите текст вопроса ${idx + 1}`);
                 hasQuestionError = true;
             }
 
-            // Проверка вариантов ответов
             const typeSelect = question.querySelector('.question-type-select');
             if (typeSelect && typeSelect.value !== 'TEXT') {
                 const options = question.querySelectorAll('.option-input');
@@ -734,17 +632,14 @@
             }
         });
 
-        // Если есть ошибки - показываем и не отправляем
         if (errors.length > 0) {
             showErrors(errors);
             return false;
         }
 
-        // Отправляем форму
         this.submit();
     });
 
-    // Убираем подсветку ошибок при вводе
     document.addEventListener('input', function(e) {
         if (e.target.classList && e.target.classList.contains('input-error')) {
             e.target.classList.remove('input-error');
@@ -756,7 +651,6 @@
             e.target.classList.remove('has-error');
         }
 
-        // Если пользователь заполняет пустой вариант ответа - убираем ошибку
         if (e.target.classList && e.target.classList.contains('option-input')) {
             if (e.target.value.trim()) {
                 e.target.classList.remove('input-error');
@@ -766,12 +660,10 @@
         }
     });
 
-    // Счётчики символов
     document.getElementById('title')?.addEventListener('input', function() {
         const counter = document.getElementById('titleCounter');
         if (counter) counter.textContent = this.value.length;
 
-        // Убираем ошибку при вводе
         if (this.value.trim()) {
             this.classList.remove('input-error');
             const errorSpan = this.parentElement.querySelector('.dynamic-field-error');
@@ -784,7 +676,6 @@
         if (counter) counter.textContent = this.value.length;
     });
 
-    // Инициализация
     window.addEventListener('DOMContentLoaded', function() {
         const titleInput = document.getElementById('title');
         const descInput = document.getElementById('description');

@@ -48,7 +48,7 @@ body {
 }
 
 .logo__text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -97,7 +97,7 @@ body {
 .hero {
     text-align: center;
     padding: 60px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     border-radius: 16px;
     margin-bottom: 60px;
     color: white;
@@ -221,7 +221,7 @@ body {
 .step__number {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     border-radius: 50%;
     display: flex;
@@ -314,7 +314,7 @@ body {
 /* ===== СТИЛИ ДЛЯ СТРАНИЦ АВТОРИЗАЦИИ ===== */
 
 .auth-page {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -346,7 +346,6 @@ body {
     text-decoration: none;
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 20px;
 }
 
 .auth-logo__icon {
@@ -354,7 +353,7 @@ body {
 }
 
 .auth-logo__text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

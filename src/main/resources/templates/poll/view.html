@@ -33,19 +33,18 @@
     <main class="main">
         <div class="container">
             <div th:if="${param.voted}" class="alert alert-success" style="margin-bottom: 20px;">
-                ✅ Ваш голос успешно учтён!
+                Ваш голос успешно учтён!
             </div>
             <div th:if="${param.error}" class="alert alert-error" style="margin-bottom: 20px;" th:text="${param.error}">
                 Ошибка
             </div>
 
             <div th:if="${!poll.isActive}" class="alert alert-warning" style="margin-bottom: 20px;">
-                ⚠️ Этот опрос закрыт. Голосование недоступно.
+                Этот опрос закрыт. Голосование недоступно.
             </div>
 
             <div th:if="${hasVoted}" class="poll-container">
                 <div class="already-voted">
-                    <div class="already-voted-icon">🗳️</div>
                     <h2 class="already-voted-title">Вы уже участвовали в этом опросе</h2>
                     <p class="already-voted-text">Спасибо за ваше мнение! Вы можете посмотреть результаты.</p>
                     <a th:href="@{|/polls/${poll.id}/results|}" class="btn btn-primary">Посмотреть результаты</a>
@@ -54,7 +53,6 @@
 
             <div th:unless="${hasVoted}" class="poll-container">
                 <div th:if="${!poll.isActive}" class="already-voted">
-                    <div class="already-voted-icon">🔒</div>
                     <h2 class="already-voted-title">Опрос закрыт</h2>
                     <p class="already-voted-text">Этот опрос больше не принимает голоса.</p>
                     <a th:href="@{|/polls/${poll.id}/results|}" class="btn btn-primary">Посмотреть результаты</a>
@@ -110,14 +108,14 @@
                         </div>
 
                         <div class="vote-button">
-                            <button type="submit" class="btn btn-primary btn--large">🗳️ Проголосовать</button>
+                            <button type="submit" class="btn btn-primary btn--large">Проголосовать</button>
                         </div>
                     </form>
                 </div>
             </div>
 
             <div class="share-section">
-                <div class="share-title">🔗 Поделиться опросом</div>
+                <div class="share-title">Поделиться опросом</div>
                 <div class="share-link-container">
                     <input type="text" id="shareLink" class="share-link" readonly>
                     <button type="button" class="copy-btn" onclick="copyShareLink()">Копировать ссылку</button>
@@ -154,7 +152,7 @@
 
         const copyBtn = document.querySelector('.copy-btn');
         const originalText = copyBtn.textContent;
-        copyBtn.textContent = 'Скопировано! ✅';
+        copyBtn.textContent = 'Скопировано!';
         setTimeout(() => {
             copyBtn.textContent = originalText;
         }, 2000);

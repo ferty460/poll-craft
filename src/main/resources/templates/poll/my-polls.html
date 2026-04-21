@@ -33,20 +33,20 @@
     <main class="main">
         <div class="container">
             <div th:if="${param.success}" class="alert alert-success">
-                ✅ <span th:text="${param.success}">Опрос успешно создан!</span>
+                <span th:text="${param.success}">Опрос успешно создан!</span>
             </div>
             <div th:if="${param.deleted}" class="alert alert-success">
-                🗑️ Опрос успешно удалён
+                Опрос успешно удалён
             </div>
             <div th:if="${param.toggled}" class="alert alert-info">
-                🔄 Статус опроса изменён
+                Статус опроса изменён
             </div>
             <div th:if="${param.error}" class="alert alert-error">
-                ⚠️ <span th:text="${param.error}">Произошла ошибка</span>
+                <span th:text="${param.error}">Произошла ошибка</span>
             </div>
 
             <div class="polls-header">
-                <h1 class="polls-title">📊 Мои опросы</h1>
+                <h1 class="polls-title">Мои опросы</h1>
                 <a th:href="@{/polls/create}" class="create-btn">
                     ➕ Создать новый опрос
                 </a>
@@ -105,10 +105,9 @@
             </div>
 
             <div th:if="${polls.empty}" class="empty-state">
-                <div class="empty-icon">📭</div>
                 <h2 class="empty-title">У вас пока нет опросов</h2>
                 <p class="empty-text">Создайте свой первый опрос и начните собирать мнения!</p>
-                <a th:href="@{/polls/create}" class="btn btn-primary btn--large">➕ Создать опрос</a>
+                <a th:href="@{/polls/create}" class="btn btn-primary btn--large">Создать опрос</a>
             </div>
         </div>
     </main>

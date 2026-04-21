@@ -19,22 +19,18 @@
         </div>
 
         <div th:if="${param.error}" class="alert alert--error">
-            <span class="alert__icon">⚠️</span>
             <span th:text="${error} ?: 'Неверный email или пароль'">Неверный email или пароль</span>
         </div>
 
         <div th:if="${param.logout}" class="alert alert--info">
-            <span class="alert__icon">👋</span>
             <span>Вы успешно вышли из системы</span>
         </div>
 
         <div th:if="${param.registered}" class="alert alert--success">
-            <span class="alert__icon">✅</span>
             <span>Регистрация успешна! Теперь войдите в систему</span>
         </div>
 
         <div th:if="${param.expired}" class="alert alert--warning">
-            <span class="alert__icon">⏰</span>
             <span>Сессия истекла. Пожалуйста, войдите снова</span>
         </div>
 

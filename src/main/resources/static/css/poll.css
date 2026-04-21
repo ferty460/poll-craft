@@ -452,7 +452,7 @@ textarea.form-input {
     display: flex;
     gap: 30px;
     padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     border-radius: 12px;
     margin-bottom: 40px;
     color: white;
@@ -540,7 +540,7 @@ canvas {
 }
 
 .percentage-fill {
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     height: 100%;
     display: flex;
     align-items: center;
